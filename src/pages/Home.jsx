@@ -11,12 +11,14 @@ import LoadingSpinner from "../components/LoadingSpinner";
 
 const Home = () => {
   const [latestVisas, setLatestVisas] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // Spinner state
   const [isDarkMode, setIsDarkMode] = useState(false); // Track dark mode
 
   useEffect(() => {
     const fetchLatestVisas = async () => {
+      setIsLoading(true); // Start loading
       try {
-        const { data } = await axios.get("http://localhost:5000/api/visas?limit=6");
+        const { data } = await axios.get("https://visa-navigator-server-murex.vercel.app/api/visas?limit=6");
         if (Array.isArray(data)) {
           setLatestVisas(data);
         } else {
@@ -26,24 +28,27 @@ const Home = () => {
       } catch (error) {
         console.error("Error fetching latest visas:", error);
         setLatestVisas([]);
+      } finally {
+        setIsLoading(false); // Stop loading
       }
     };
 
     fetchLatestVisas();
   }, []);
-  if (!latestVisas) {
-    return <LoadingSpinner/>
-  }
 
   const toggleTheme = () => {
-    setIsDarkMode(prev => !prev);
-    if (!isDarkMode) {
-      document.documentElement.classList.add('dark'); // Add dark class to the root element
-    } else {
-      document.documentElement.classList.remove('dark'); // Remove dark class to return to light mode
-    }
+    setIsDarkMode((prev) => !prev);
+    document.documentElement.classList.toggle("dark");
   };
 
+  // Show spinner while loading latest visas
+  if (isLoading) {
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    );
+  }
   return (
     <div>
       {/* Theme Toggle Button */}
@@ -64,7 +69,7 @@ const Home = () => {
           interval={3000}
         >
           <div>
-            <img className="w-full h-56 object-cover md:h-96 rounded-lg" src={bannerImage1} alt="Banner 1" />
+            <img className="w-full h-56 object-cover md:h-96" src={bannerImage1} alt="Banner 1" />
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white">
               <h1 className="text-4xl font-bold">
                 <Typewriter
@@ -83,7 +88,7 @@ const Home = () => {
             </div>
           </div>
           <div>
-            <img className="w-full h-56 object-cover md:h-96 rounded-lg" src={bannerImage2} alt="Banner 2" />
+            <img className="w-full h-56 object-cover md:h-96" src={bannerImage2} alt="Banner 2" />
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white">
               <h1 className="text-4xl font-bold">Easy and Secure</h1>
               <p className="mt-4 text-lg">
@@ -92,7 +97,7 @@ const Home = () => {
             </div>
           </div>
           <div>
-            <img className="w-full h-56 object-cover md:h-96 rounded-lg" src={bannerImage3} alt="Banner 3" />
+            <img className="w-full h-56 object-cover md:h-96" src={bannerImage3} alt="Banner 3" />
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white">
               <h1 className="text-4xl font-bold">Track Your Applications</h1>
               <p className="mt-4 text-lg">
@@ -105,7 +110,7 @@ const Home = () => {
 
       {/* Latest Visas Section */}
       <section className="py-16 bg-gray-100 dark:bg-gray-800">
-        <div className="container mx-auto">
+        <div className="max-w-lg mx-auto px-4 sm:max-w-4xl lg:max-w-6xl lg:px-8">
           <h2 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">Latest Visas</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {latestVisas.length > 0 ? (
@@ -155,7 +160,7 @@ const Home = () => {
 
       {/* Extra Section 1: Benefits */}
       <section className="py-16 bg-blue-100 dark:bg-gray-800 dark:text-white">
-        <div className="container mx-auto">
+        <div className="max-w-lg mx-auto px-4 sm:max-w-4xl lg:max-w-6xl lg:px-8">
           <h2 className="text-3xl font-bold text-center mb-8">
             Why Choose Visa Navigator?
           </h2>
@@ -184,7 +189,7 @@ const Home = () => {
 
       {/* Extra Section 2: Testimonials */}
       <section className="py-16 bg-gray-200  dark:bg-gray-800">
-        <div className="container mx-auto">
+        <div className="max-w-lg mx-auto px-4 sm:max-w-4xl lg:max-w-6xl lg:px-8">
           <h2 className="text-3xl font-bold text-center mb-8 dark:text-white">
             What Our Users Say
           </h2>
